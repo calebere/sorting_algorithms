@@ -1,43 +1,51 @@
 #include "sort.h"
 /**
- * insertion_sort_list - is a function to order an array
- * with insertion algorithm
- * @list: Double linked list
+ * swap_two - swap to doubly linked list elements
+ * @a: left element
+ * @b: right element
+ * @list: all doubly linked list
+ * Return: pointer to a element (actual)
+ */
+listint_t *swap_two(listint_t *a, listint_t *b, listint_t **list)
+{
+	if (a->prev)
+		(a->prev)->next = b;
+	else
+		*list = b, b->prev = NULL;
+	if ((b->next))
+		(b->next)->prev = a;
+	b->prev = a->prev;
+	a->prev = b;
+	a->next = b->next;
+	b->next = a;
+	return (a);
+}
+/**
+ * insertion_sort_list - sorts list in ascending order
+ * @list: a doubly linked list of integers to be sorted
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *Current = NULL;
-	listint_t *Last = NULL;
-	listint_t *Nextemp = NULL;
+	listint_t *actual;
+	listint_t *prev, *back;
 
 	if (!list || !(*list) || !(*list)->next)
 		return;
 
-	Current = (*list)->next;
-
-	while (Current)
+	actual = (*list)->next;
+	while (actual)
 	{
-		Nextemp = Current->next;
-		Last = Current->prev;
-		while (Last && Current->n < Last->n)
+		prev = actual->prev;
+		back = actual;
+		while (back->prev && back->n < prev->n)
 		{
-			if (Last->prev)
-				Last->prev->next = Current;
-
-			Last->next = Current->next;
-			Current->next = Last;
-			Current->prev = Last->prev;
-			Last->prev = Current;
-
-			if (Last->next)
-				Last->next->prev = Last;
-
-			if (!Current->prev)
-				(*list) = Current;
-
-			Last = Current->prev;
+			actual = swap_two(prev, back, list);
 			print_list(*list);
+			if (!back->prev)
+				break;
+			prev = back->prev;
 		}
-		Current = Nextemp;
+		actual = actual->next;
+		prev = prev->next;
 	}
 }
